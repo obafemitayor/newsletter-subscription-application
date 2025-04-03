@@ -23,9 +23,6 @@
 .env
 .env.*
 
-# Ignore database configuration
-/config/database.yml
-
 # Ignore test coverage
 /coverage/*
 

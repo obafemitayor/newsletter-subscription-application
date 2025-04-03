@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS storyblok_test;
+GRANT ALL PRIVILEGES ON storyblok_test.* TO 'app'@'%';
+FLUSH PRIVILEGES;

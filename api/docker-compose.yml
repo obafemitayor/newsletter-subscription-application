@@ -4,6 +4,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: storyblok
@@ -11,6 +12,11 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "--password=$$MYSQL_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build: .
@@ -20,10 +26,50 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=mysql2://app:password@db:3306/storyblok
       - RAILS_ENV=development
+      - DATABASE_URL=mysql2://app:password@db:3306/storyblok
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  test_migrate:
+    build: .
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - RAILS_ENV=test
+      - DATABASE_URL=mysql2://app:password@db:3306/storyblok_test
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c '
+        bundle exec rails db:migrate &&
+        touch /app/tmp/migration_done
+      '
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /app/tmp/migration_done ]"]
+      interval: 1s
+      timeout: 1s
+      retries: 60
+      start_period: 5s
+
+  test:
+    build: .
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - RAILS_ENV=test
+      - DATABASE_URL=mysql2://app:password@db:3306/storyblok_test
+      - RSPEC_FORMAT=documentation
+    depends_on:
+      db:
+        condition: service_healthy
+      test_migrate:
+        condition: service_completed_successfully
+    command: bundle exec rspec --format documentation --color --format progress
 
 volumes:
   mysql_data:
