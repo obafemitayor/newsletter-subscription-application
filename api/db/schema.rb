@@ -10,12 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_03_031411) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_03_112848) do
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "guid", limit: 36
+    t.index ["guid"], name: "index_categories_on_guid", unique: true
   end
 
   create_table "customers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -25,6 +27,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_031411) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "guid", limit: 36
+    t.index ["guid"], name: "index_customers_on_guid", unique: true
     t.index ["work_email"], name: "index_customers_on_work_email", unique: true
   end
 
@@ -34,8 +38,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_031411) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "guid", limit: 36
     t.index ["category_id"], name: "index_subscriptions_on_category_id"
     t.index ["customer_id"], name: "index_subscriptions_on_customer_id"
+    t.index ["guid"], name: "index_subscriptions_on_guid", unique: true
   end
 
   add_foreign_key "subscriptions", "categories"
