@@ -6,7 +6,7 @@ module V1
       validate_query_string_parameters
 
       subscriptions = SubscriptionService.get_subscriptions(
-        category_guids: Array.wrap(params[:category_guid]).presence,
+        category_guids: Array.wrap(params[:category_guids]).presence,
         pagination_id: params[:pagination_id]&.to_i,
         pagination_direction: params[:pagination_direction] || 'forward',
         limit: (params[:limit] || 10).to_i
@@ -58,8 +58,8 @@ module V1
         raise ArgumentError, 'limit must be numeric'
       end
 
-      if params[:category_guid] && ![*params[:category_guid]].all?(&:present?)
-        raise ArgumentError, 'category_guid must be a list of non-empty strings'
+      if params[:category_guids] && ![*params[:category_guids]].all?(&:present?)
+        raise ArgumentError, 'category_guids must be a list of non-empty strings'
       end
 
       if params[:pagination_direction].present? && params[:pagination_direction] != 'forward' && params[:pagination_direction] != 'backward'

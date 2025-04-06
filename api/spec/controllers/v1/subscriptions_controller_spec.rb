@@ -140,12 +140,12 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(json_response['error']).to eq('limit must be numeric')
       end
 
-      it 'validates category_guid is not an empty string' do
-        get :index, params: { category_guid: '' }
+      it 'validates category_guids is not an empty string' do
+        get :index, params: { category_guids: '' }
         
         expect(response).to have_http_status(:bad_request)
         json_response = JSON.parse(response.body)
-        expect(json_response['error']).to eq('category_guid must be a list of non-empty strings')
+        expect(json_response['error']).to eq('category_guids must be a list of non-empty strings')
       end
 
       it 'validates that pagination_direction is either forward or backward' do
@@ -188,7 +188,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
 
       it 'returns paginated results when limit and one category_guid exist in the query parameters' do
         # Get records of first page
-        get :index, params: { limit: 5, category_guid: category1.guid }
+        get :index, params: { limit: 5, category_guids: category1.guid }
         expect(response).to have_http_status(:ok)
         first_page = JSON.parse(response.body)
         expect(first_page['subscriptions'].length).to eq(5)
@@ -197,7 +197,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(first_page['has_more']).to be_truthy
 
         # Get records of second page
-        get :index, params: { limit: 5, category_guid: category1.guid, pagination_id: first_page['next_cursor'] }
+        get :index, params: { limit: 5, category_guids: category1.guid, pagination_id: first_page['next_cursor'] }
         expect(response).to have_http_status(:ok)
         second_page = JSON.parse(response.body)
         expect(second_page['subscriptions'].length).to eq(3)
@@ -245,7 +245,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
       end
 
       it 'returns paginated results when only category_guid exists in the query parameters' do
-        get :index, params: { category_guid: category1.guid }
+        get :index, params: { category_guids: category1.guid }
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result['subscriptions'].length).to eq(8)
