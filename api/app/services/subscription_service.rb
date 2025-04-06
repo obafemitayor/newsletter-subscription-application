@@ -17,6 +17,7 @@ class SubscriptionService
     end
 
     def get_subscriptions(category_guids: nil, last_id: nil, limit: 10)
+      data_size = limit + 1
       subscriptions = Subscription.active
                                 .joins(:customer, :category)
                                 .select('subscriptions.id',
@@ -27,10 +28,13 @@ class SubscriptionService
 
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
       subscriptions = subscriptions.where('subscriptions.id > ?', last_id) if last_id.present?
-      subscriptions = subscriptions.order(:id).limit(limit)
+      subscriptions = subscriptions.order(:id).limit(data_size)
+
+      has_more = subscriptions.size > limit
+      subscription_list = subscriptions.take(limit)
       {
-        subscriptions: subscriptions.as_json(except: :id),
-        next_cursor: subscriptions.last&.id
+        subscriptions: subscription_list.as_json(except: :id),
+        next_cursor: has_more ? subscription_list.last&.id : nil
       }
     end
 

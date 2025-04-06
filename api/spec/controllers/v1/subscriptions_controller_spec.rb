@@ -104,7 +104,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         second_page = JSON.parse(response.body)
         expect(second_page['subscriptions'].length).to eq(5)
         expect(second_page['subscriptions']).not_to eq(first_page['subscriptions'])
-        expect(second_page['next_cursor']).to be_present
+        expect(second_page['next_cursor']).to be_nil
 
         [first_page, second_page].each do |page|
           page['subscriptions'].each do |subscription|
@@ -151,7 +151,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result['subscriptions'].length).to eq(15)
-        expect(result['next_cursor']).to be_present
+        expect(result['next_cursor']).to be_nil
 
         result['subscriptions'].each do |subscription|
           expect(subscription).to include(
@@ -177,7 +177,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         second_page = JSON.parse(response.body)
         expect(second_page['subscriptions'].length).to eq(3) # 8 total - 5 from first page
         expect(second_page['subscriptions']).not_to eq(first_page['subscriptions'])
-        expect(second_page['next_cursor']).to be_present
+        expect(second_page['next_cursor']).to be_nil
 
         [first_page, second_page].each do |page|
           page['subscriptions'].each do |subscription|
@@ -202,7 +202,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result['subscriptions'].length).to eq(16)
-        expect(result['next_cursor']).to be_present
+        expect(result['next_cursor']).to be_nil
 
         result['subscriptions'].each do |subscription|
           expect(subscription).to include(
@@ -219,7 +219,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result['subscriptions'].length).to eq(8)
-        expect(result['next_cursor']).to be_present
+        expect(result['next_cursor']).to be_nil
 
         result['subscriptions'].each do |subscription|
           expect(subscription).to include(
@@ -249,7 +249,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         
         expect(result['subscriptions'].length).to eq(1)
         expect(result['subscriptions'].first['work_email']).to eq(third_subscription.customer.work_email)
-        expect(result['next_cursor']).to eq(third_subscription.id)
+        expect(result['next_cursor']).to be_nil
       end
     end
   end

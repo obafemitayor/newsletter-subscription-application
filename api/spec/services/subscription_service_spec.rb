@@ -66,7 +66,7 @@ RSpec.describe SubscriptionService do
       result = SubscriptionService.get_subscriptions(limit: 5)
 
       expect(result[:subscriptions].length).to eq(3)
-      expect(result[:next_cursor]).to eq(subscription3.id)
+      expect(result[:next_cursor]).to be_nil
       
       result[:subscriptions].each do |subscription|
         expect(subscription).to include(
@@ -85,7 +85,7 @@ RSpec.describe SubscriptionService do
 
       result2 = SubscriptionService.get_subscriptions(last_id: result1[:next_cursor], limit: 2)
       expect(result2[:subscriptions].length).to eq(1)
-      expect(result2[:next_cursor]).to eq(subscription3.id)
+      expect(result2[:next_cursor]).to be_nil
 
       [result1, result2].each do |result|
         result[:subscriptions].each do |subscription|
@@ -106,7 +106,7 @@ RSpec.describe SubscriptionService do
       )
 
       expect(result[:subscriptions].length).to eq(2)
-      expect(result[:next_cursor]).to eq(subscription3.id)
+      expect(result[:next_cursor]).to be_nil
       
       result[:subscriptions].each do |subscription|
         expect(subscription).to include(
@@ -139,15 +139,7 @@ RSpec.describe SubscriptionService do
         limit: 3
       )
       expect(result2[:subscriptions].length).to eq(3)
-      expect(result2[:next_cursor]).to eq(subscription7.id)
-
-      result3 = SubscriptionService.get_subscriptions(
-        category_guids: [category1.guid],
-        last_id: result2[:next_cursor],
-        limit: 3
-      )
-      expect(result3[:subscriptions].length).to eq(0)
-      expect(result3[:next_cursor]).to be_nil
+      expect(result2[:next_cursor]).to be_nil
 
       [result1, result2].each do |result|
         result[:subscriptions].each do |subscription|
