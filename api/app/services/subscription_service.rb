@@ -18,14 +18,14 @@ class SubscriptionService
 
     def get_subscriptions(category_guids: nil, pagination_id: nil, pagination_direction: 'forward', limit: 10)
       data_size = limit + 1
-      subscriptions = get_subscription_list(
+      subscriptions = fetch_subscriptions_from_db(
         category_guids: category_guids,
         limit: data_size,
         pagination_id: pagination_id,
         pagination_direction: pagination_direction
       )
+      subscription_list = build_subscription_list(subscriptions, limit, pagination_direction)
 
-      subscription_list = subscriptions.take(limit)
       {
         subscriptions: subscription_list.as_json(except: :id),
         previous_cursor: subscription_list.first&.id,
@@ -58,7 +58,7 @@ class SubscriptionService
       end
     end
 
-    def get_subscription_list(category_guids: nil, limit:, pagination_id: nil, pagination_direction: 'forward')
+    def fetch_subscriptions_from_db(category_guids: nil, limit:, pagination_id: nil, pagination_direction: 'forward')
       subscriptions = Subscription.active
       .joins(:customer, :category)
       .select('subscriptions.id',
@@ -69,9 +69,19 @@ class SubscriptionService
 
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
       subscriptions = subscriptions.where(pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
-      subscriptions = subscriptions.order(:id).limit(limit)
+      subscriptions = subscriptions.order(id: pagination_direction == 'forward' ? :asc : :desc).limit(limit)
 
-      subscriptions
+      Rails.logger.info("Subscriptions: #{subscriptions.to_json.to_s}")
+
+      # Reverse the order when pagination direction is backward to ensure the value of previous cursor is correct
+      pagination_direction == 'backward' ? subscriptions.reverse : subscriptions
     end
+
+    def build_subscription_list(subscriptions, limit, pagination_direction)
+      return subscriptions.take(limit) if pagination_direction == 'forward'
+      return subscriptions.drop(1).take(limit) if subscriptions.size > limit
+      subscriptions.take(limit)
+    end
+
   end
 end
