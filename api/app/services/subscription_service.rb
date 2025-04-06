@@ -68,7 +68,7 @@ class SubscriptionService
             'categories.name as category_name')
 
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
-      subscriptions = subscriptions.where(pagination_direction === 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
+      subscriptions = subscriptions.where(pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
       subscriptions = subscriptions.order(:id).limit(limit)
 
       subscriptions

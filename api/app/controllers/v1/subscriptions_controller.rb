@@ -62,7 +62,7 @@ module V1
         raise ArgumentError, 'category_guid must be a list of non-empty strings'
       end
 
-      if params[:pagination_direction].present? && params[:pagination_direction] !== 'forward' && params[:pagination_direction] !== 'backward'
+      if params[:pagination_direction].present? && params[:pagination_direction] != 'forward' && params[:pagination_direction] != 'backward'
         raise ArgumentError, 'pagination_direction must either be forward or backward'
       end
     end
