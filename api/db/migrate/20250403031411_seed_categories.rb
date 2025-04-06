@@ -4,18 +4,8 @@ class SeedCategories < ActiveRecord::Migration[7.0]
       "Product updates",
       "Articles and market insights",
       "Case studies",
-      "Industry news",
       "Technology trends",
-      "Best practices",
-      "Tips and tutorials",
-      "Customer success stories",
-      "Company announcements",
-      "Event notifications",
-      "Research reports",
-      "Developer resources",
-      "Security updates",
-      "Feature highlights",
-      "Community spotlight"
+      "Best practices"
     ]
 
     categories.each do |name|
@@ -28,18 +18,8 @@ class SeedCategories < ActiveRecord::Migration[7.0]
       "Product updates",
       "Articles and market insights",
       "Case studies",
-      "Industry news",
       "Technology trends",
-      "Best practices",
-      "Tips and tutorials",
-      "Customer success stories",
-      "Company announcements",
-      "Event notifications",
-      "Research reports",
-      "Developer resources",
-      "Security updates",
-      "Feature highlights",
-      "Community spotlight"
+      "Best practices"
     ]).delete_all
   end
 end
