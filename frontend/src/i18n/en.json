@@ -1,0 +1,38 @@
+{
+  "validation": {
+    "required": "{field} is required",
+    "email": {
+      "invalid": "Please enter a valid email address"
+    },
+    "categories": {
+      "required": "Please select at least one category"
+    }
+  },
+  "alerts": {
+    "subscription": {
+      "success": "Subscription created successfully",
+      "error": "Failed to create subscription, please try again"
+    },
+    "categories": {
+      "error": "Failed to fetch categories, please try again"
+    }
+  },
+  "subscription": {
+    "inputs": {
+      "firstName": "First name *",
+      "lastName": "Last name *",
+      "workEmail": "Work Email *"
+    },
+    "categories": {
+      "title": "Choose categories to subscribe to *",
+      "productUpdates": "Product updates",
+      "marketInsights": "Articles and market insights",
+      "caseStudies": "Case studies"
+    },
+    "privacy": {
+      "text": "For information about our privacy practices and commitment to protecting your privacy, please review our",
+      "link": "Privacy Policy"
+    },
+    "submit": "Subscribe"
+  }
+}
