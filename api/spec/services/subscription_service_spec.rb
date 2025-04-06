@@ -66,7 +66,8 @@ RSpec.describe SubscriptionService do
       result = SubscriptionService.get_subscriptions(limit: 5)
 
       expect(result[:subscriptions].length).to eq(3)
-      expect(result[:next_cursor]).to be_nil
+      expect(result[:next_cursor]).to eq(subscription3.id)
+      expect(result[:previous_cursor]).to eq(subscription1.id)
       
       result[:subscriptions].each do |subscription|
         expect(subscription).to include(
@@ -82,10 +83,13 @@ RSpec.describe SubscriptionService do
       result1 = SubscriptionService.get_subscriptions(limit: 2)
       expect(result1[:subscriptions].length).to eq(2)
       expect(result1[:next_cursor]).to eq(subscription2.id)
+      expect(result1[:previous_cursor]).to eq(subscription1.id)
 
-      result2 = SubscriptionService.get_subscriptions(last_id: result1[:next_cursor], limit: 2)
+      result2 = SubscriptionService.get_subscriptions(pagination_id: result1[:next_cursor], limit: 2)
       expect(result2[:subscriptions].length).to eq(1)
-      expect(result2[:next_cursor]).to be_nil
+      expect(result2[:next_cursor]).to eq(subscription3.id)
+      expect(result2[:previous_cursor]).to eq(subscription3.id)
+      expect(result2[:has_more]).to be_falsey
 
       [result1, result2].each do |result|
         result[:subscriptions].each do |subscription|
@@ -106,7 +110,9 @@ RSpec.describe SubscriptionService do
       )
 
       expect(result[:subscriptions].length).to eq(2)
-      expect(result[:next_cursor]).to be_nil
+      expect(result[:next_cursor]).to eq(subscription3.id)
+      expect(result[:previous_cursor]).to eq(subscription1.id)
+      expect(result[:has_more]).to be_falsey
       
       result[:subscriptions].each do |subscription|
         expect(subscription).to include(
@@ -131,15 +137,19 @@ RSpec.describe SubscriptionService do
 
       result1 = SubscriptionService.get_subscriptions(category_guids: [category1.guid], limit: 3)
       expect(result1[:subscriptions].length).to eq(3)
+      expect(result1[:previous_cursor]).to eq(subscription1.id)
       expect(result1[:next_cursor]).to eq(subscription4.id)
+      expect(result1[:has_more]).to be_truthy
 
       result2 = SubscriptionService.get_subscriptions(
         category_guids: [category1.guid],
-        last_id: result1[:next_cursor],
+        pagination_id: result1[:next_cursor],
         limit: 3
       )
       expect(result2[:subscriptions].length).to eq(3)
-      expect(result2[:next_cursor]).to be_nil
+      expect(result2[:previous_cursor]).to eq(subscription5.id)
+      expect(result2[:next_cursor]).to eq(subscription7.id)
+      expect(result2[:has_more]).to be_falsey
 
       [result1, result2].each do |result|
         result[:subscriptions].each do |subscription|
@@ -151,6 +161,43 @@ RSpec.describe SubscriptionService do
           )
         end
       end
+    end
+
+    it 'should be able to navigate forward and backward' do
+      # Create additional customers and subscriptions for category1
+      customer4 = create(:customer)
+      customer5 = create(:customer)
+      customer6 = create(:customer)
+      customer7 = create(:customer)
+      subscription4 = create(:subscription, customer: customer4, category: category1)
+      subscription5 = create(:subscription, customer: customer5, category: category1)
+      subscription6 = create(:subscription, customer: customer6, category: category1)
+      subscription7 = create(:subscription, customer: customer7, category: category1)
+
+      result1 = SubscriptionService.get_subscriptions(category_guids: [category1.guid], limit: 3)
+      expect(result1[:subscriptions].length).to eq(3)
+      expect(result1[:previous_cursor]).to eq(subscription1.id)
+      expect(result1[:next_cursor]).to eq(subscription4.id)
+
+      result2 = SubscriptionService.get_subscriptions(
+        category_guids: [category1.guid],
+        pagination_id: result1[:next_cursor],
+        limit: 3
+      )
+      expect(result2[:subscriptions].length).to eq(3)
+      expect(result2[:previous_cursor]).to eq(subscription5.id)
+      expect(result2[:next_cursor]).to eq(subscription7.id)
+
+      result3 = SubscriptionService.get_subscriptions(
+        category_guids: [category1.guid],
+        pagination_id: result2[:previous_cursor],
+        is_forward: false,
+        limit: 3
+      )
+
+      expect(result3[:subscriptions].length).to eq(3)
+      expect(result3[:previous_cursor]).to eq(subscription1.id)
+      expect(result3[:next_cursor]).to eq(subscription4.id)
     end
   end
 end

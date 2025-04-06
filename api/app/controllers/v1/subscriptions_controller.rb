@@ -7,7 +7,8 @@ module V1
 
       subscriptions = SubscriptionService.get_subscriptions(
         category_guids: Array.wrap(params[:category_guid]).presence,
-        last_id: params[:last_fetched_id]&.to_i,
+        pagination_id: params[:pagination_id]&.to_i,
+        is_forward: params[:is_forward].nil? ? true : params[:is_forward] == 'true',
         limit: (params[:limit] || 10).to_i
       )
 
@@ -49,8 +50,8 @@ module V1
     end
 
     def validate_query_string_parameters
-      if params[:last_fetched_id].present? && params[:last_fetched_id].to_i.zero?
-        raise ArgumentError, 'last_fetched_id must be numeric'
+      if params[:pagination_id].present? && params[:pagination_id].to_i.zero?
+        raise ArgumentError, 'pagination_id must be numeric'
       end
 
       if params[:limit].present? && params[:limit].to_i.zero?
@@ -59,6 +60,10 @@ module V1
 
       if params[:category_guid] && ![*params[:category_guid]].all?(&:present?)
         raise ArgumentError, 'category_guid must be a list of non-empty strings'
+      end
+
+      if params[:is_forward].present? && ![true, false, 'true', 'false'].include?(params[:is_forward])
+        raise ArgumentError, 'is_forward must be a boolean'
       end
     end
   end

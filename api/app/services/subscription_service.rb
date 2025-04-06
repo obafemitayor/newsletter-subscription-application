@@ -16,25 +16,21 @@ class SubscriptionService
       end
     end
 
-    def get_subscriptions(category_guids: nil, last_id: nil, limit: 10)
+    def get_subscriptions(category_guids: nil, pagination_id: nil, is_forward: true, limit: 10)
       data_size = limit + 1
-      subscriptions = Subscription.active
-                                .joins(:customer, :category)
-                                .select('subscriptions.id',
-                                      'customers.work_email',
-                                      'customers.first_name',
-                                      'customers.last_name',
-                                      'categories.name as category_name')
+      subscriptions = get_subscription_list(
+        category_guids: category_guids,
+        limit: data_size,
+        pagination_id: pagination_id,
+        is_forward: is_forward
+      )
 
-      subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
-      subscriptions = subscriptions.where('subscriptions.id > ?', last_id) if last_id.present?
-      subscriptions = subscriptions.order(:id).limit(data_size)
-
-      has_more = subscriptions.size > limit
       subscription_list = subscriptions.take(limit)
       {
         subscriptions: subscription_list.as_json(except: :id),
-        next_cursor: has_more ? subscription_list.last&.id : nil
+        previous_cursor: subscription_list.first&.id,
+        next_cursor: subscription_list.last&.id,
+        has_more: subscriptions.size > limit
       }
     end
 
@@ -60,6 +56,22 @@ class SubscriptionService
           updated_at: Time.current
         }
       end
+    end
+
+    def get_subscription_list(category_guids: nil, limit:, pagination_id: nil, is_forward: true)
+      subscriptions = Subscription.active
+      .joins(:customer, :category)
+      .select('subscriptions.id',
+            'customers.work_email',
+            'customers.first_name',
+            'customers.last_name',
+            'categories.name as category_name')
+
+      subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
+      subscriptions = subscriptions.where(is_forward ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
+      subscriptions = subscriptions.order(:id).limit(limit)
+
+      subscriptions
     end
   end
 end
