@@ -4,6 +4,7 @@
             <div class="form-group">
                 <div class="form-element">
                     <input type="text" 
+                        :aria-label="$t('subscription.inputs.firstName')"
                         v-model="subscription.firstName" 
                         :placeholder="$t('subscription.inputs.firstName')"
                         @blur="validateFormField('firstName', subscription.firstName)"
@@ -13,6 +14,7 @@
                 </div>
                 <div class="form-element">
                     <input type="text"
+                        :aria-label="$t('subscription.inputs.lastName')"
                         v-model="subscription.lastName" 
                         :placeholder="$t('subscription.inputs.lastName')"
                         @blur="validateFormField('lastName', subscription.lastName)"
@@ -25,6 +27,7 @@
             <div class="form-group">
                 <div class="form-element">
                     <input 
+                        :aria-label="$t('subscription.inputs.workEmail')"
                         type="email" 
                         v-model="subscription.workEmail" 
                         :placeholder="$t('subscription.inputs.workEmail')"
@@ -45,6 +48,7 @@
                         class="categories-checkbox"
                     >
                         <input 
+                            :aria-label="$t('subscription.categories.checkbox', { category: category.name })"
                             type="checkbox" 
                             v-model="subscription.categoryGuids" 
                             :value="category.guid"

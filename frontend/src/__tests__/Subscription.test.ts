@@ -40,7 +40,8 @@ const i18n = createI18n({
           workEmail: 'Work Email'
         },
         categories: {
-          title: 'Newsletter Categories'
+          title: 'Newsletter Categories',
+          checkbox: 'Subscribe to {category}'
         },
         privacy: {
           text: 'By subscribing you agree to our',

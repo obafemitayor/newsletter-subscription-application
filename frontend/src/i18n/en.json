@@ -27,7 +27,8 @@
       "title": "Choose categories to subscribe to *",
       "productUpdates": "Product updates",
       "marketInsights": "Articles and market insights",
-      "caseStudies": "Case studies"
+      "caseStudies": "Case studies",
+      "checkbox": "Subscribe to {category}"
     },
     "privacy": {
       "text": "For information about our privacy practices and commitment to protecting your privacy, please review our",

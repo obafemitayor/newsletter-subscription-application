@@ -13,7 +13,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
+      path: '/subscription',
       name: 'subscription',
       component: () => import('./views/subscription/components/Subscription.vue')
     }
