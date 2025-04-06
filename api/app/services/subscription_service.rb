@@ -70,9 +70,7 @@ class SubscriptionService
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
       subscriptions = subscriptions.where(pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
       subscriptions = subscriptions.order(id: pagination_direction == 'forward' ? :asc : :desc).limit(limit)
-
-      Rails.logger.info("Subscriptions: #{subscriptions.to_json.to_s}")
-
+      
       # Reverse the order when pagination direction is backward to ensure the value of previous cursor is correct
       pagination_direction == 'backward' ? subscriptions.reverse : subscriptions
     end
