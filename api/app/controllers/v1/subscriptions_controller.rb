@@ -8,7 +8,7 @@ module V1
       subscriptions = SubscriptionService.get_subscriptions(
         category_guids: Array.wrap(params[:category_guid]).presence,
         pagination_id: params[:pagination_id]&.to_i,
-        is_forward: params[:is_forward].nil? ? true : params[:is_forward] == 'true',
+        pagination_direction: params[:pagination_direction] || 'forward',
         limit: (params[:limit] || 10).to_i
       )
 
@@ -62,8 +62,8 @@ module V1
         raise ArgumentError, 'category_guid must be a list of non-empty strings'
       end
 
-      if params[:is_forward].present? && ![true, false, 'true', 'false'].include?(params[:is_forward])
-        raise ArgumentError, 'is_forward must be a boolean'
+      if params[:pagination_direction].present? && params[:pagination_direction] !== 'forward' && params[:pagination_direction] !== 'backward'
+        raise ArgumentError, 'pagination_direction must either be forward or backward'
       end
     end
   end

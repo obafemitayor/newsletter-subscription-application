@@ -191,7 +191,7 @@ RSpec.describe SubscriptionService do
       result3 = SubscriptionService.get_subscriptions(
         category_guids: [category1.guid],
         pagination_id: result2[:previous_cursor],
-        is_forward: false,
+        pagination_direction: 'backward',
         limit: 3
       )
 

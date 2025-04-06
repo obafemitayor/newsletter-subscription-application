@@ -16,13 +16,13 @@ class SubscriptionService
       end
     end
 
-    def get_subscriptions(category_guids: nil, pagination_id: nil, is_forward: true, limit: 10)
+    def get_subscriptions(category_guids: nil, pagination_id: nil, pagination_direction: 'forward', limit: 10)
       data_size = limit + 1
       subscriptions = get_subscription_list(
         category_guids: category_guids,
         limit: data_size,
         pagination_id: pagination_id,
-        is_forward: is_forward
+        pagination_direction: pagination_direction
       )
 
       subscription_list = subscriptions.take(limit)
@@ -58,7 +58,7 @@ class SubscriptionService
       end
     end
 
-    def get_subscription_list(category_guids: nil, limit:, pagination_id: nil, is_forward: true)
+    def get_subscription_list(category_guids: nil, limit:, pagination_id: nil, pagination_direction: 'forward')
       subscriptions = Subscription.active
       .joins(:customer, :category)
       .select('subscriptions.id',
@@ -68,7 +68,7 @@ class SubscriptionService
             'categories.name as category_name')
 
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
-      subscriptions = subscriptions.where(is_forward ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
+      subscriptions = subscriptions.where(pagination_direction === 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
       subscriptions = subscriptions.order(:id).limit(limit)
 
       subscriptions

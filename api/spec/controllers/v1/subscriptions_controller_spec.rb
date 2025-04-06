@@ -148,12 +148,12 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(json_response['error']).to eq('category_guid must be a list of non-empty strings')
       end
 
-      it 'validates is_forward is a boolean' do
-        get :index, params: { is_forward: 'abc' }
+      it 'validates that pagination_direction is either forward or backward' do
+        get :index, params: { pagination_direction: 'abc' }
         
         expect(response).to have_http_status(:bad_request)
         json_response = JSON.parse(response.body)
-        expect(json_response['error']).to eq('is_forward must be a boolean')
+        expect(json_response['error']).to eq('pagination_direction must either be forward or backward')
       end
     end
 
@@ -317,7 +317,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(result_two['has_more']).to be_falsey
 
         # Backward pagination
-        get :index, params: { limit: 3, pagination_id: result_two['previous_cursor'], is_forward: false }
+        get :index, params: { limit: 3, pagination_id: result_two['previous_cursor'], pagination_direction: 'backward' }
         expect(response).to have_http_status(:ok)
         result_three = JSON.parse(response.body)
         
