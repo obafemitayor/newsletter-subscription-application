@@ -67,7 +67,7 @@ story-blok-newsletter-subscription-application/
 - Run `docker compose build --no-cache` to build the containers.
 - Run `docker compose run --rm api bundle install` to install the gem packages.
 - Run `docker compose run --rm api rails db:migrate` to migrate the database.
-- Run `docker compose up -d` to start the containers.
+- Run `docker compose up api -d` to start the containers.
 - Launch http://localhost:3000 on your browser to confirm that the API server is running.
 - Navigate to the root directory of the frontend folder.
 - Run `npm install` to install dependencies.
