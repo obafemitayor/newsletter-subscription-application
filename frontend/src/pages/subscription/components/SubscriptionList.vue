@@ -6,7 +6,7 @@
         <div class="checkbox-group">
           <div v-for="category in categories" :key="category.guid" class="category-checkbox">
             <label>
-              <input type="checkbox" v-model="selectedCategories" :value="category.guid">
+              <input :aria-label="$t('subscriptionList.filter.checkbox', { category: category.name })" type="checkbox" v-model="selectedCategories" :value="category.guid">
               <span class="checkbox-label">{{ category.name }}</span>
             </label>
           </div>

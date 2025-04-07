@@ -39,7 +39,8 @@
   "subscriptionList": {
     "title": "Subscriptions",
     "filter": {
-      "button": "Filter subscriptions"
+      "button": "Filter subscriptions",
+      "checkbox": "Filter subscriptions by {category}"
     },
     "table": {
       "email": "Work Email",
