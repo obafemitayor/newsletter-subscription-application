@@ -59,8 +59,8 @@ story-blok-newsletter-subscription-application/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- `Docker`. You must have either [docker desktop](https://www.docker.com/products/docker-desktop) or [orb stack](https://orbstack.dev/) (recommended) installed. Note that orb stack only works on mac and linux.
-- `Node` with version greater than or equal to `20.10.0`
+- `Docker`: You must have either [docker desktop](https://www.docker.com/products/docker-desktop) or [orb stack](https://orbstack.dev/) (recommended) installed. Note that orb stack only works on mac and linux.
+- `Node`: with version greater than or equal to `20.10.0`
 
 ### ⚙️ Setup
 - Navigate to the root directory of the api folder.
