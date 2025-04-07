@@ -1,4 +1,4 @@
-# 📬 Newsletter Subscription App — Storyblok
+# 📬 Storyblok's Newsletter Subscription App
 This is a web application that allows users to subscribe to newsletters that are focussed on different topics. The web app has two pages which are:
 1. [Subscription Page](http://localhost:5173/subscription) which allows users to fill a subscription form with basic personal details and select newsletter categories
 2. [Subscription List Page](http://localhost:5173/subscription/list) which allows users to view all submitted subscriptions and filter subscriptions by category
@@ -59,8 +59,8 @@ story-blok-newsletter-subscription-application/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Docker. You must have either [docker desktop](https://www.docker.com/products/docker-desktop) or [orb stack](https://orbstack.dev/) (recommended) installed. Note that orb stack only works on mac and linux.
-- Node.js greater than or equal to v20.10.0
+- `Docker`: You must have either [docker desktop](https://www.docker.com/products/docker-desktop) or [orb stack](https://orbstack.dev/) (recommended) installed. Note that orb stack only works on mac and linux.
+- `Node`: with version greater than or equal to `20.10.0`
 
 ### ⚙️ Setup
 - Navigate to the root directory of the api folder.
