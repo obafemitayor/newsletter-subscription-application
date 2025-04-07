@@ -57,24 +57,25 @@ describe('Subscription Page', () => {
   it('should render correctly and display the form when the category list was fetched successfully', async () => {
     initGetCategoriesMock(200,mockCategories);
     renderComponent();
-    expect(screen.getByPlaceholderText('First name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Last name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Work Email')).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText('Newsletter Categories')).toBeInTheDocument();
       expect(screen.getByText('Product updates')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('First name')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Last name')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Work Email')).toBeInTheDocument();
       expect(alertMock).not.toHaveBeenCalled();
     });
   });
 
-  it('should display an error alert when the category list was not fetched successfully', async () => {
+  it('should display an error alert and not show the form when the category list was not fetched successfully', async () => {
     initGetCategoriesMock(500, null, new Error('Failed to fetch categories'));
     renderComponent();
-    expect(screen.getByPlaceholderText('First name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Last name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Work Email')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('First name')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('Last name')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('Work Email')).not.toBeInTheDocument();
     await waitFor(() => {
       expect(alertMock).toHaveBeenCalledWith('Failed to fetch categories, please try again');
+      expect(screen.getByText('Failed to fetch categories, please try again')).toBeInTheDocument();
     });
   });
 

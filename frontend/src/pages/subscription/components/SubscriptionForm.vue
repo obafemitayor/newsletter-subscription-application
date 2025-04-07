@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="form">
+        <div v-if="categories.length > 0" class="form">
             <div class="form-group">
                 <div class="form-element">
                     <input type="text" 
@@ -74,6 +74,9 @@
             >
                 {{ $t('subscription.submit') }}
             </button>
+        </div>
+        <div v-else>
+            <h3>{{ $t('alerts.categories.error') }}</h3>
         </div>
     </div>
 </template>

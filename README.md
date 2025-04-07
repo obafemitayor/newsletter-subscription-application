@@ -95,4 +95,6 @@ Here is a list of things that I would like to improve but couldn't due to time c
 - Add visual feedback for loading and success/failure states
 - Improve the UI rendering for the categories a customer has subscribed to on the subscription list page
 - Use toasts or a proper notification library instead of using `alert()`
+- Add a proper UI for visual feedback when there was an error fetching categories on the subscription and subscription list pages
+- Add a not found page for visual feedback when a route that does not exist is accessed
 ---
