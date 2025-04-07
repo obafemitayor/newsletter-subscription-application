@@ -89,7 +89,7 @@ story-blok-newsletter-subscription-application/
 
 ## 🔧 Things to Improve
 Here is a list of things that I would like to improve but couldn't due to time constraints:
-- Add end to end tests with cypress
+- Add end to end tests with `Cypress`
 - Use a proper localization tool that can automatically manage translations
 - Add visual feedback for loading and success/failure states
 - Use toasts or a proper notification library instead of using `alert()`
