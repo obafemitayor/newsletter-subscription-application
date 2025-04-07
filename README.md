@@ -6,6 +6,7 @@ This is a web application that allows users to subscribe to newsletters that are
 
 
 [Here](https://www.loom.com/share/0b77263a3a7445ef8020b1fbda6f6209) is a short video that demonstrates what the application looks like
+
 ---
 ## 🗂️ Basic Repository Folder Structure
 
