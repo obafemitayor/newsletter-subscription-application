@@ -15,6 +15,9 @@
     },
     "categories": {
       "error": "Failed to fetch categories, please try again"
+    },
+    "subscriptionList": {
+      "error": "Failed to fetch subscriptions, please try again"
     }
   },
   "subscription": {
@@ -25,9 +28,6 @@
     },
     "categories": {
       "title": "Choose categories to subscribe to *",
-      "productUpdates": "Product updates",
-      "marketInsights": "Articles and market insights",
-      "caseStudies": "Case studies",
       "checkbox": "Subscribe to {category}"
     },
     "privacy": {
@@ -35,5 +35,22 @@
       "link": "Privacy Policy"
     },
     "submit": "Subscribe"
+  },
+  "subscriptionList": {
+    "title": "Subscriptions",
+    "filter": {
+      "button": "Filter subscriptions"
+    },
+    "table": {
+      "email": "Work Email",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "category": "Category",
+      "noData": "No subscriptions found"
+    },
+    "pagination": {
+      "loadPrevious": "Previous",
+      "loadNext": "Next"
+    }
   }
 }

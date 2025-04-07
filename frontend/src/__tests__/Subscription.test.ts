@@ -1,8 +1,8 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/vue'
-import { createI18n } from 'vue-i18n'
-import Subscription from '../views/subscription/components/Subscription.vue'
+import i18n from './utils/utils'
+import Subscription from '../pages/subscription/components/Subscription.vue'
 import axios from 'axios'
-import type { Category, SubscriptionPayload } from '../views/subscription/types/types'
+import type { Category, SubscriptionPayload } from '../pages/subscription/types/types'
 
 const realAxiosGet = axios.get
 jest.mock('axios')
@@ -27,49 +27,6 @@ const initCreateSubscriptionMock = (status: number, payload: SubscriptionPayload
     return realAxiosGet(url, config)
   })
 }
-
-const i18n = createI18n({
-  legacy: false,
-  locale: 'en',
-  messages: {
-    en: {
-      subscription: {
-        inputs: {
-          firstName: 'First name',
-          lastName: 'Last name',
-          workEmail: 'Work Email'
-        },
-        categories: {
-          title: 'Newsletter Categories',
-          checkbox: 'Subscribe to {category}'
-        },
-        privacy: {
-          text: 'By subscribing you agree to our',
-          link: 'Privacy Policy'
-        },
-        submit: 'Subscribe'
-      },
-      validation: {
-        required: '{field} is required',
-        email: {
-          invalid: 'Please enter a valid email address'
-        },
-        categories: {
-          required: 'Please select at least one category'
-        }
-      },
-      alerts: {
-        subscription: {
-          success: 'Subscription created successfully',
-          error: 'Failed to create subscription, please try again'
-        },
-        categories: {
-          error: 'Failed to fetch categories, please try again'
-        }
-      }
-    }
-  }
-})
 
 const renderComponent = () => {
   return render(Subscription, {
