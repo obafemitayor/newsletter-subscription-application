@@ -1,6 +1,11 @@
 en:
   hello: "Hello world"
 
+  services:
+    subscription:
+      errors:
+        create_failed: "Failed to create subscription"
+
   activerecord:
     errors:
       models:

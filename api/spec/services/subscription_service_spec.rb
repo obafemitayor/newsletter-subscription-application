@@ -66,15 +66,15 @@ RSpec.describe SubscriptionService do
       result = SubscriptionService.get_subscriptions(limit: 5)
 
       expect(result[:subscriptions].length).to eq(3)
-      expect(result[:next_cursor]).to eq(subscription3.id)
-      expect(result[:previous_cursor]).to eq(subscription1.id)
+      expect(result[:next_cursor]).to eq(customer3.id)
+      expect(result[:previous_cursor]).to eq(customer1.id)
 
       result[:subscriptions].each do |subscription|
         expect(subscription).to include(
           'work_email' => be_a(String),
           'first_name' => be_a(String),
           'last_name' => be_a(String),
-          'category_name' => be_a(String)
+          'category_names' => be_a(Array)
         )
       end
     end
@@ -82,13 +82,13 @@ RSpec.describe SubscriptionService do
     it 'returns paginated record when category_guids is not provided and data is more than limit' do
       result1 = SubscriptionService.get_subscriptions(limit: 2)
       expect(result1[:subscriptions].length).to eq(2)
-      expect(result1[:next_cursor]).to eq(subscription2.id)
-      expect(result1[:previous_cursor]).to eq(subscription1.id)
+      expect(result1[:next_cursor]).to eq(customer2.id)
+      expect(result1[:previous_cursor]).to eq(customer1.id)
 
       result2 = SubscriptionService.get_subscriptions(pagination_id: result1[:next_cursor], limit: 2)
       expect(result2[:subscriptions].length).to eq(1)
-      expect(result2[:next_cursor]).to eq(subscription3.id)
-      expect(result2[:previous_cursor]).to eq(subscription3.id)
+      expect(result2[:next_cursor]).to eq(customer3.id)
+      expect(result2[:previous_cursor]).to eq(customer3.id)
       expect(result2[:has_more]).to be_falsey
 
       [result1, result2].each do |result|
@@ -97,7 +97,7 @@ RSpec.describe SubscriptionService do
             'work_email' => be_a(String),
             'first_name' => be_a(String),
             'last_name' => be_a(String),
-            'category_name' => be_a(String)
+            'category_names' => be_a(Array)
           )
         end
       end
@@ -110,8 +110,8 @@ RSpec.describe SubscriptionService do
       )
 
       expect(result[:subscriptions].length).to eq(2)
-      expect(result[:next_cursor]).to eq(subscription3.id)
-      expect(result[:previous_cursor]).to eq(subscription1.id)
+      expect(result[:next_cursor]).to eq(customer3.id)
+      expect(result[:previous_cursor]).to eq(customer1.id)
       expect(result[:has_more]).to be_falsey
 
       result[:subscriptions].each do |subscription|
@@ -119,7 +119,7 @@ RSpec.describe SubscriptionService do
           'work_email' => be_a(String),
           'first_name' => be_a(String),
           'last_name' => be_a(String),
-          'category_name' => eq(category1.name)
+          'category_names' => be_an(Array)
         )
       end
     end
@@ -130,15 +130,15 @@ RSpec.describe SubscriptionService do
       customer5 = create(:customer)
       customer6 = create(:customer)
       customer7 = create(:customer)
-      subscription4 = create(:subscription, customer: customer4, category: category1)
-      subscription5 = create(:subscription, customer: customer5, category: category1)
+      create(:subscription, customer: customer4, category: category1)
+      create(:subscription, customer: customer5, category: category1)
       create(:subscription, customer: customer6, category: category1)
-      subscription7 = create(:subscription, customer: customer7, category: category1)
+      create(:subscription, customer: customer7, category: category1)
 
       result1 = SubscriptionService.get_subscriptions(category_guids: [category1.guid], limit: 3)
       expect(result1[:subscriptions].length).to eq(3)
-      expect(result1[:previous_cursor]).to eq(subscription1.id)
-      expect(result1[:next_cursor]).to eq(subscription4.id)
+      expect(result1[:previous_cursor]).to eq(customer1.id)
+      expect(result1[:next_cursor]).to eq(customer4.id)
       expect(result1[:has_more]).to be_truthy
 
       result2 = SubscriptionService.get_subscriptions(
@@ -147,8 +147,8 @@ RSpec.describe SubscriptionService do
         limit: 3
       )
       expect(result2[:subscriptions].length).to eq(3)
-      expect(result2[:previous_cursor]).to eq(subscription5.id)
-      expect(result2[:next_cursor]).to eq(subscription7.id)
+      expect(result2[:previous_cursor]).to eq(customer5.id)
+      expect(result2[:next_cursor]).to eq(customer7.id)
       expect(result2[:has_more]).to be_falsey
 
       [result1, result2].each do |result|
@@ -157,7 +157,7 @@ RSpec.describe SubscriptionService do
             'work_email' => be_a(String),
             'first_name' => be_a(String),
             'last_name' => be_a(String),
-            'category_name' => eq(category1.name)
+            'category_names' => be_an(Array)
           )
         end
       end
@@ -169,15 +169,15 @@ RSpec.describe SubscriptionService do
       customer5 = create(:customer)
       customer6 = create(:customer)
       customer7 = create(:customer)
-      subscription4 = create(:subscription, customer: customer4, category: category1)
-      subscription5 = create(:subscription, customer: customer5, category: category1)
+      create(:subscription, customer: customer4, category: category1)
+      create(:subscription, customer: customer5, category: category1)
       create(:subscription, customer: customer6, category: category1)
-      subscription7 = create(:subscription, customer: customer7, category: category1)
+      create(:subscription, customer: customer7, category: category1)
 
       result1 = SubscriptionService.get_subscriptions(category_guids: [category1.guid], limit: 3)
       expect(result1[:subscriptions].length).to eq(3)
-      expect(result1[:previous_cursor]).to eq(subscription1.id)
-      expect(result1[:next_cursor]).to eq(subscription4.id)
+      expect(result1[:previous_cursor]).to eq(customer1.id)
+      expect(result1[:next_cursor]).to eq(customer4.id)
 
       result2 = SubscriptionService.get_subscriptions(
         category_guids: [category1.guid],
@@ -185,8 +185,8 @@ RSpec.describe SubscriptionService do
         limit: 3
       )
       expect(result2[:subscriptions].length).to eq(3)
-      expect(result2[:previous_cursor]).to eq(subscription5.id)
-      expect(result2[:next_cursor]).to eq(subscription7.id)
+      expect(result2[:previous_cursor]).to eq(customer5.id)
+      expect(result2[:next_cursor]).to eq(customer7.id)
 
       result3 = SubscriptionService.get_subscriptions(
         category_guids: [category1.guid],
@@ -196,8 +196,8 @@ RSpec.describe SubscriptionService do
       )
 
       expect(result3[:subscriptions].length).to eq(3)
-      expect(result3[:previous_cursor]).to eq(subscription1.id)
-      expect(result3[:next_cursor]).to eq(subscription4.id)
+      expect(result3[:previous_cursor]).to eq(customer1.id)
+      expect(result3[:next_cursor]).to eq(customer4.id)
     end
   end
 end

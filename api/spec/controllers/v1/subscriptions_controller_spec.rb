@@ -116,8 +116,9 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
               'work_email',
               'first_name',
               'last_name',
-              'category_name'
+              'category_names'
             )
+            expect(subscription['category_names']).to be_an(Array)
           end
         end
       end
@@ -181,8 +182,9 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
             'work_email',
             'first_name',
             'last_name',
-            'category_name'
+            'category_names'
           )
+          expect(subscription['category_names']).to be_an(Array)
         end
       end
 
@@ -212,8 +214,9 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
               'work_email',
               'first_name',
               'last_name',
-              'category_name'
+              'category_names'
             )
+            expect(subscription['category_names']).to be_an(Array)
           end
         end
       end
@@ -238,8 +241,9 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
             'work_email',
             'first_name',
             'last_name',
-            'category_name'
+            'category_names'
           )
+          expect(subscription['category_names']).to be_an(Array)
         end
       end
 
@@ -257,20 +261,33 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
             'work_email',
             'first_name',
             'last_name',
-            'category_name'
+            'category_names'
           )
+          expect(subscription['category_names']).to be_an(Array)
         end
       end
     end
 
     context 'when paginating' do
       it 'should be able to paginate in both directions' do
-        subscription_one = create(:subscription, customer: create(:customer), category: category1)
-        create(:subscription, customer: create(:customer), category: category1)
-        subscription_three = create(:subscription, customer: create(:customer), category: category1)
-        subscription_four = create(:subscription, customer: create(:customer), category: category1)
-        create(:subscription, customer: create(:customer), category: category1)
-        subscription_six = create(:subscription, customer: create(:customer), category: category1)
+        customer1 = create(:customer)
+        customer2 = create(:customer)
+        customer3 = create(:customer)
+        customer4 = create(:customer)
+        customer5 = create(:customer)
+        customer6 = create(:customer)
+        create(:subscription, customer: customer1, category: category1)
+        create(:subscription, customer: customer1, category: category2)
+        create(:subscription, customer: customer2, category: category1)
+        create(:subscription, customer: customer2, category: category2)
+        create(:subscription, customer: customer3, category: category1)
+        create(:subscription, customer: customer3, category: category2)
+        create(:subscription, customer: customer4, category: category1)
+        create(:subscription, customer: customer4, category: category2)
+        create(:subscription, customer: customer5, category: category1)
+        create(:subscription, customer: customer5, category: category2)
+        create(:subscription, customer: customer6, category: category1)
+        create(:subscription, customer: customer6, category: category2)
 
         # Forward pagination
         get :index, params: { limit: 3 }
@@ -278,8 +295,8 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         result = response.parsed_body
 
         expect(result['subscriptions'].length).to eq(3)
-        expect(result['previous_cursor']).to eq(subscription_one.id)
-        expect(result['next_cursor']).to eq(subscription_three.id)
+        expect(result['previous_cursor']).to eq(customer1.id)
+        expect(result['next_cursor']).to eq(customer3.id)
         expect(result['has_more']).to be_truthy
 
         # Forward pagination
@@ -288,8 +305,8 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         result_two = response.parsed_body
 
         expect(result_two['subscriptions'].length).to eq(3)
-        expect(result_two['previous_cursor']).to eq(subscription_four.id)
-        expect(result_two['next_cursor']).to eq(subscription_six.id)
+        expect(result_two['previous_cursor']).to eq(customer4.id)
+        expect(result_two['next_cursor']).to eq(customer6.id)
         expect(result_two['has_more']).to be_falsey
 
         # Backward pagination
@@ -298,8 +315,8 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         result_three = response.parsed_body
 
         expect(result_three['subscriptions'].length).to eq(3)
-        expect(result_three['previous_cursor']).to eq(subscription_one.id)
-        expect(result_three['next_cursor']).to eq(subscription_three.id)
+        expect(result_three['next_cursor']).to eq(customer3.id)
+        expect(result_three['previous_cursor']).to eq(customer1.id)
         expect(result_three['has_more']).to be_falsey
       end
     end

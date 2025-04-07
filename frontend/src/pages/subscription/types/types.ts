@@ -33,7 +33,7 @@ export interface SubscriptionListItem {
   work_email: string
   first_name: string
   last_name: string
-  category_name: string
+  category_names: string[]
 }
 
 export interface SubscriptionListResponse {

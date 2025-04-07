@@ -12,29 +12,26 @@ class SubscriptionService
           c.guid = SecureRandom.uuid
         end
         subscriptions = prepare_subscription_data(customer, category_guids)
-
-        # ignoring rubocop warning because I am positive I have
-        # validated the data before insertion so this is safe
-        # rubocop:disable Rails/SkipsModelValidations
         Subscription.insert_all!(subscriptions)
-        # rubocop:enable Rails/SkipsModelValidations
+      rescue StandardError
+        raise StandardError, I18n.t('services.subscription.errors.create_failed')
       end
     end
 
     def get_subscriptions(category_guids: nil, pagination_id: nil, pagination_direction: 'forward', limit: 10)
-      data_size = limit + 1
-      subscriptions = fetch_subscriptions_from_db(
+      subscriptions = fetch_subscriptions(
         category_guids: category_guids,
-        limit: data_size,
+        limit: limit + 1,
         pagination_id: pagination_id,
         pagination_direction: pagination_direction
-      )
-      subscription_list = build_subscription_list(subscriptions, limit, pagination_direction)
+      ).to_a
 
+      subscription_list = build_subscription_list(subscriptions, limit, pagination_direction)
+      formatted_subscription_list = format_subscription_list(subscription_list)
       {
-        subscriptions: subscription_list.as_json(except: :id),
-        previous_cursor: subscription_list.first&.id,
-        next_cursor: subscription_list.last&.id,
+        subscriptions: formatted_subscription_list.as_json(except: [:id, :customer_id]),
+        previous_cursor: formatted_subscription_list.first&.customer_id,
+        next_cursor: formatted_subscription_list.last&.customer_id,
         has_more: subscriptions.size > limit
       }
     end
@@ -49,7 +46,6 @@ class SubscriptionService
 
     def prepare_subscription_data(customer, category_guids)
       unsubscribed_category_ids = get_unsubscribed_category_ids(customer, category_guids)
-      # This is a very rare edge case but adding it just to be safe.
       raise ActiveRecord::Rollback if unsubscribed_category_ids.empty?
 
       unsubscribed_category_ids.map do |category_id|
@@ -63,28 +59,13 @@ class SubscriptionService
       end
     end
 
-    def fetch_subscriptions_from_db(limit:, category_guids: nil, pagination_id: nil, pagination_direction: 'forward')
-      subscriptions = Subscription.active
-                                  .joins(:customer, :category)
-                                  .select('subscriptions.id',
-                                          'customers.work_email',
-                                          'customers.first_name',
-                                          'customers.last_name',
-                                          'categories.name as category_name')
-
-      subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
-
-      # using cursor-based pagination because it is more efficient and
-      # scales better with large data sets than offset-based pagination
-      if pagination_id.present?
-        subscriptions = subscriptions.where(
-          pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id
-        )
-      end
-      subscriptions = subscriptions.order(id: pagination_direction == 'forward' ? :asc : :desc).limit(limit)
-
-      # Reverse the order when pagination direction is backward to ensure
-      # the value of previous cursor is correct
+    def fetch_subscriptions(limit:, category_guids: nil, pagination_id: nil, pagination_direction: 'forward')
+      subscriptions = Subscription.fetch_subscriptions(
+        limit: limit,
+        category_guids: category_guids,
+        pagination_id: pagination_id,
+        pagination_direction: pagination_direction
+      )
       pagination_direction == 'backward' ? subscriptions.reverse : subscriptions
     end
 
@@ -93,6 +74,14 @@ class SubscriptionService
       return subscriptions.drop(1).take(limit) if subscriptions.size > limit
 
       subscriptions.take(limit)
+    end
+
+    def format_subscription_list(subscription_list)
+      subscription_list.map do |subscription|
+        subscription.tap do |s|
+          s.category_names = s.category_names&.split(',') || []
+        end
+      end
     end
   end
 end

@@ -93,5 +93,6 @@ Here is a list of things that I would like to improve but couldn't due to time c
 - Add caching for the categories to prevent frequent database queries as that dataset would not change often
 - Use a proper localization tool that can automatically manage translations
 - Add visual feedback for loading and success/failure states
+- Improve the UI rendering for the categories a customer has subscribed to on the subscription list page
 - Use toasts or a proper notification library instead of using `alert()`
 ---

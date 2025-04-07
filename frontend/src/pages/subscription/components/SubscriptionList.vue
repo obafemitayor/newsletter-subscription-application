@@ -30,7 +30,7 @@
             <td>{{ subscription.work_email }}</td>
             <td>{{ subscription.first_name }}</td>
             <td>{{ subscription.last_name }}</td>
-            <td>{{ subscription.category_name }}</td>
+            <td>{{ subscription.category_names.join(', ') }}</td>
           </tr>
         </tbody>
       </table>
