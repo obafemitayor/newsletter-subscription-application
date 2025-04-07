@@ -1,4 +1,4 @@
-import type { SubscriptionListItem } from '../../pages/subscription/types/types'
+import type { SubscriptionListItem } from '../../pages/subscription/types/types';
 
 export const mockSubscriptions: SubscriptionListItem[] = [
   {
@@ -13,7 +13,7 @@ export const mockSubscriptions: SubscriptionListItem[] = [
     work_email: 'jane@example.com',
     category_name: 'Articles and market insights'
   }
-]
+];
 
 export const page1Data = [
   {

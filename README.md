@@ -34,7 +34,7 @@ story-blok-newsletter-subscription-application/
 │   │   ├── pages/
 │   │   │   └── subscription/
 │   │   │       ├── components/
-│   │   │       │   ├── Subscription.vue
+│   │   │       │   ├── SubscriptionForm.vue
 │   │   │       │   └── SubscriptionList.vue
 │   │   │       ├── service/
 │   │   │       │   ├── category.ts
@@ -44,7 +44,7 @@ story-blok-newsletter-subscription-application/
 │   │   │       │   └── validation.ts
 │   │   │       └── types/
 │   └── __tests__/
-│       ├── Subscription.test.ts
+│       ├── SubscriptionForm.test.ts
 │       ├── SubscriptionList.test.ts
 │       └── utils/
 │           ├── categories-mock-data.ts

@@ -79,36 +79,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import type { Category, SubscriptionData, ValidationErrors } from '../types/types'
-import { fetchCategories } from '../service/category'
-import { createSubscriptionForCustomer } from '../service/subscription'
-import { validateField } from '../helpers/validation'
+import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { Category, SubscriptionData, ValidationErrors } from '../types/types';
+import { fetchCategories } from '../service/category';
+import { createSubscriptionForCustomer } from '../service/subscription';
+import { validateField } from '../helpers/validation';
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const categories = ref<Category[]>([])
+const categories = ref<Category[]>([]);
 const errors = ref<ValidationErrors>({
   firstName: '',
   lastName: '',
   workEmail: '',
   categories: ''
-})
+});
 
 const subscription = ref<SubscriptionData>({
   firstName: '',
   lastName: '',
   workEmail: '',
   categoryGuids: []
-})
+});
 
 const validateFormField = (field: keyof ValidationErrors, value: string | string[]) => {
-  errors.value[field] = ''
-  const validation = validateField(field, value, t)
-  errors.value[field] = validation.errorMessage
-  return validation.isValid
-}
+  errors.value[field] = '';
+  const validation = validateField(field, value, t);
+  errors.value[field] = validation.errorMessage;
+  return validation.isValid;
+};
 
 const createSubscription = async () => {
   const isFirstNameValid = validateFormField('firstName', subscription.value.firstName);
@@ -126,26 +126,26 @@ const createSubscription = async () => {
       last_name: subscription.value.lastName,
       work_email: subscription.value.workEmail,
       category_guids: subscription.value.categoryGuids
-    })
-    alert(t('alerts.subscription.success'))
+    });
+    alert(t('alerts.subscription.success'));
     subscription.value = {
       firstName: '',
       lastName: '',
       workEmail: '',
       categoryGuids: []
-    }
-  } catch (error) {
-    alert(t('alerts.subscription.error'))
+    };
+  } catch {
+    alert(t('alerts.subscription.error'));
   }
-}
+};
 
 onMounted(async () => {
   try {
-    categories.value = await fetchCategories()
-  } catch (error) {
-    alert(t('alerts.categories.error'))
+    categories.value = await fetchCategories();
+  } catch {
+    alert(t('alerts.categories.error'));
   }
-})
+});
 </script>
 
 <style scoped>

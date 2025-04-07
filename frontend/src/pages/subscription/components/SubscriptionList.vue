@@ -57,21 +57,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { fetchCategories } from '../service/category'
-import { getSubscriptions } from '../service/subscription'
-import { Category, SubscriptionListItem, SubscriptionQueryParams, PaginationDirection, SubscriptionListResponse } from '../types/types'
+import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { fetchCategories } from '../service/category';
+import { getSubscriptions } from '../service/subscription';
+import { Category, SubscriptionListItem, SubscriptionQueryParams, PaginationDirection, SubscriptionListResponse } from '../types/types';
 
-const { t } = useI18n()
-const categories = ref<Category[]>([])
-const subscriptions = ref<SubscriptionListItem[]>([])
-const selectedCategories = ref<string[]>([])
-const hasMore = ref(true)
-const previousCursor = ref<number | null>(null)
-const nextCursor = ref<number | null>(null)
-const paginationDirection = ref<PaginationDirection>('forward')
-const limit = 10
+const { t } = useI18n();
+const categories = ref<Category[]>([]);
+const subscriptions = ref<SubscriptionListItem[]>([]);
+const selectedCategories = ref<string[]>([]);
+const hasMore = ref(true);
+const previousCursor = ref<number | null>(null);
+const nextCursor = ref<number | null>(null);
+const paginationDirection = ref<PaginationDirection>('forward');
+const limit = 10;
 const showLoadPreviousButton = ref(false);
 const showLoadNextButton = ref(false);
 const isFirstPage = ref(true);
@@ -80,77 +80,75 @@ const buildQueryParams =  () : SubscriptionQueryParams => {
   const params: SubscriptionQueryParams = { limit, pagination_direction: paginationDirection.value };
 
   if (selectedCategories.value.length > 0) {
-    params.category_guids = selectedCategories.value
+    params.category_guids = selectedCategories.value;
   }
 
   if (!isFirstPage.value && paginationDirection.value === 'forward' && nextCursor.value !== null) {
-    params.pagination_id = nextCursor.value
+    params.pagination_id = nextCursor.value;
   }
 
   if (!isFirstPage.value && paginationDirection.value === 'backward' && previousCursor.value !== null) {
-    params.pagination_id = previousCursor.value
+    params.pagination_id = previousCursor.value;
   }
   
-  return params
-}
+  return params;
+};
 
 const setPaginationButtons = () => {
   if(paginationDirection.value === 'forward') {
-    showLoadPreviousButton.value = isFirstPage.value ? false : true
+    showLoadPreviousButton.value = isFirstPage.value ? false : true;
     showLoadNextButton.value = hasMore.value;
     return;
   }
-  showLoadPreviousButton.value = hasMore.value
-  showLoadNextButton.value = true
-}
+  showLoadPreviousButton.value = hasMore.value;
+  showLoadNextButton.value = true;
+};
 
 const getCategories = async () => {
   try {
     return await fetchCategories();
-  } catch (error) {
+  } catch {
     throw new Error(t('alerts.categories.error'));
   }
-}
+};
 
 const getSubscriptionList = async (params: SubscriptionQueryParams) => {
   try {
-    return await getSubscriptions(params)
-  } catch (error) {
+    return await getSubscriptions(params);
+  } catch {
     throw new Error(t('alerts.subscriptionList.error'));
   }
-}
+};
 
-const setCategoryData = async (response: Category[]) => {
-  categories.value = response
-}
+const setCategoryData = (response: Category[]) => categories.value = response;
 
-const setSubscriptionData = async (response: SubscriptionListResponse) => {
-  subscriptions.value = response.subscriptions
-  previousCursor.value = response.previous_cursor
-  nextCursor.value = response.next_cursor
-  hasMore.value = response.has_more
-  setPaginationButtons()
-}
+const setSubscriptionData = (response: SubscriptionListResponse) => {
+  subscriptions.value = response.subscriptions;
+  previousCursor.value = response.previous_cursor;
+  nextCursor.value = response.next_cursor;
+  hasMore.value = response.has_more;
+  setPaginationButtons();
+};
 
 const filterSubscriptions = async () => {
   isFirstPage.value = true;
   paginationDirection.value = 'forward';
   const response = await getSubscriptionList(buildQueryParams());
-  setSubscriptionData(response)
-}
+  setSubscriptionData(response);
+};
 
 const paginate = async (direction: PaginationDirection) => {
-  paginationDirection.value = direction
+  paginationDirection.value = direction;
   isFirstPage.value = false;
   const response = await getSubscriptionList(buildQueryParams());
-  setSubscriptionData(response)
-}
+  setSubscriptionData(response);
+};
 
 onMounted(async () => {
   try {
     const [categories, subscriptions] = await Promise.all([getCategories(), getSubscriptionList(buildQueryParams())]);
-    setCategoryData(categories)
-    setSubscriptionData(subscriptions)
+    setCategoryData(categories);
+    setSubscriptionData(subscriptions);
   } catch (error: unknown) {
     if (error instanceof Error) {
       alert(error.message);

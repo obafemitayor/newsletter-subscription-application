@@ -16,4 +16,4 @@ export default {
     runScripts: 'dangerously'
   },
   moduleFileExtensions: ['js', 'jsx', 'json', 'vue', 'ts', 'tsx']
-}
+};

@@ -1,26 +1,26 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/vue'
-import i18n from './utils/utils'
-import SubscriptionList from '../pages/subscription/components/SubscriptionList.vue'
-import axios from 'axios'
-import type { Category, SubscriptionQueryParams, SubscriptionListResponse } from '../pages/subscription/types/types'
-import { page1Data, page2Data, page3Data } from './utils/subscription-list-mock-data'
-import { mockCategories } from './utils/categories-mock-data'
-import { mockSubscriptions } from './utils/subscription-list-mock-data'
+import { render, screen, waitFor, fireEvent } from '@testing-library/vue';
+import i18n from './utils/utils';
+import SubscriptionList from '../pages/subscription/components/SubscriptionList.vue';
+import axios from 'axios';
+import type { Category, SubscriptionQueryParams, SubscriptionListResponse } from '../pages/subscription/types/types';
+import { page1Data, page2Data, page3Data } from './utils/subscription-list-mock-data';
+import { mockCategories } from './utils/categories-mock-data';
+import { mockSubscriptions } from './utils/subscription-list-mock-data';
 
-const realAxiosGet = axios.get
-jest.mock('axios')
+const realAxiosGet = axios.get;
+jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 const alertMock = jest.spyOn(window, 'alert').mockImplementation();
-const BASE_URL = 'http://localhost:3000/v1'
+const BASE_URL = 'http://localhost:3000/v1';
 
 const initGetCategoriesMock = (status: number, categories: Category[] | null, error: Error | null = null) => {
   mockedAxios.get.mockImplementationOnce((url: string, config) => {
     if (url === `${BASE_URL}/categories`) {
       return status === 200 ? Promise.resolve({ data: { categories } }) : Promise.reject(error);
     }
-    return realAxiosGet(url, config)
-  })
-}
+    return realAxiosGet(url, config);
+  });
+};
 
 const initGetSubscriptionsMock = (
   status: number, 
@@ -34,28 +34,28 @@ const initGetSubscriptionsMock = (
         ? Promise.resolve({ data: response })
         : Promise.reject(error || new Error('Server error'));
     }
-    return realAxiosGet(url, config)
-  })
-}
+    return realAxiosGet(url, config);
+  });
+};
 
 const renderComponent = () => {
   return render(SubscriptionList, {
     global: {
       plugins: [i18n]
     }
-  })
-}
+  });
+};
 
 describe('SubscriptionList Component', () => {
   beforeEach(() => {
     mockedAxios.get.mockReset();
     alertMock.mockClear();
-  })
+  });
 
   afterAll(() => {
     mockedAxios.get.mockReset();
     alertMock.mockRestore();
-  })
+  });
 
   it('should load successfully when categories and subscriptions are fetched successfully', async () => {
     initGetCategoriesMock(200, mockCategories);

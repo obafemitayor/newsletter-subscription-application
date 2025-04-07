@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom'
-import { config } from '@vue/test-utils'
+import '@testing-library/jest-dom';
+import { config } from '@vue/test-utils';
 
 Object.defineProperty(global, 'matchMedia', {
   writable: true,
@@ -13,10 +13,10 @@ Object.defineProperty(global, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 config.global.mocks = {
   $t: (msg: string) => msg
-}
+};
 
-global.alert = jest.fn()
+global.alert = jest.fn();
