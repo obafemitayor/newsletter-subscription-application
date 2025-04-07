@@ -46,23 +46,40 @@ module V1
 
       return unless params[:category_guids].empty?
 
-      raise ActionController::ParameterMissing.new('category_guids cannot be empty')
+      raise ActionController::ParameterMissing, 'category_guids cannot be empty'
     end
 
     def validate_query_string_parameters
-      if params[:pagination_id].present? && params[:pagination_id].to_i.zero?
-        raise ArgumentError, 'pagination_id must be numeric'
-      end
+      validate_pagination_id
+      validate_limit
+      validate_category_guids
+      validate_pagination_direction
+    end
 
-      raise ArgumentError, 'limit must be numeric' if params[:limit].present? && params[:limit].to_i.zero?
+    def validate_pagination_id
+      return unless params[:pagination_id].present? && params[:pagination_id].to_i.zero?
 
-      if params[:category_guids] && ![*params[:category_guids]].all?(&:present?)
-        raise ArgumentError, 'category_guids must be a list of non-empty strings'
-      end
+      raise ArgumentError, 'pagination_id must be numeric'
+    end
 
-      if params[:pagination_direction].present? && params[:pagination_direction] != 'forward' && params[:pagination_direction] != 'backward'
-        raise ArgumentError, 'pagination_direction must either be forward or backward'
-      end
+    def validate_limit
+      return unless params[:limit].present? && params[:limit].to_i.zero?
+
+      raise ArgumentError, 'limit must be numeric'
+    end
+
+    def validate_category_guids
+      return unless params[:category_guids] && ![*params[:category_guids]].all?(&:present?)
+
+      raise ArgumentError, 'category_guids must be a list of non-empty strings'
+    end
+
+    def validate_pagination_direction
+      return if params[:pagination_direction].blank?
+
+      return if ['forward', 'backward'].include?(params[:pagination_direction])
+
+      raise ArgumentError, 'pagination_direction must either be forward or backward'
     end
   end
 end

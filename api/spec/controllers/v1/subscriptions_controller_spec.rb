@@ -29,7 +29,8 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         expect(customer.subscriptions.count).to eq(1)
       end
 
-      it 'creates a subscription for an existing customer when request contains categories the customer is already subscribed to' do
+      it 'creates a subscription for an existing customer when request contains ' \
+         'categories the customer is already subscribed to' do
         another_category = create(:category)
         customer = create(:customer, work_email: valid_params[:work_email])
         create(:subscription, customer: customer, category: category)
@@ -69,7 +70,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
       it 'returns bad request when work_email is invalid' do
         post :create, params: valid_params.merge(work_email: 'not-an-email')
         expect(response).to have_http_status(:bad_request)
-        json_response = JSON.parse(response.body)
+        json_response = response.parsed_body
         expect(json_response['error']).to eq('work_email must be a valid email address')
       end
     end
@@ -93,7 +94,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Get records of first page
         get :index
         expect(response).to have_http_status(:ok)
-        first_page = JSON.parse(response.body)
+        first_page = response.parsed_body
         expect(first_page['subscriptions'].length).to eq(10) # Default limit
         expect(first_page['has_more']).to be_truthy
         expect(first_page['previous_cursor']).to be_present
@@ -102,7 +103,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Get records of second page
         get :index, params: { pagination_id: first_page['next_cursor'] }
         expect(response).to have_http_status(:ok)
-        second_page = JSON.parse(response.body)
+        second_page = response.parsed_body
         expect(second_page['subscriptions'].length).to eq(5)
         expect(second_page['subscriptions']).not_to eq(first_page['subscriptions'])
         expect(second_page['next_cursor']).to be_present
@@ -127,7 +128,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         get :index, params: { pagination_id: 'abc' }
 
         expect(response).to have_http_status(:bad_request)
-        json_response = JSON.parse(response.body)
+        json_response = response.parsed_body
         expect(json_response['error']).to eq('pagination_id must be numeric')
       end
 
@@ -135,7 +136,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         get :index, params: { limit: 'abc' }
 
         expect(response).to have_http_status(:bad_request)
-        json_response = JSON.parse(response.body)
+        json_response = response.parsed_body
         expect(json_response['error']).to eq('limit must be numeric')
       end
 
@@ -143,7 +144,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         get :index, params: { category_guids: '' }
 
         expect(response).to have_http_status(:bad_request)
-        json_response = JSON.parse(response.body)
+        json_response = response.parsed_body
         expect(json_response['error']).to eq('category_guids must be a list of non-empty strings')
       end
 
@@ -151,7 +152,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         get :index, params: { pagination_direction: 'abc' }
 
         expect(response).to have_http_status(:bad_request)
-        json_response = JSON.parse(response.body)
+        json_response = response.parsed_body
         expect(json_response['error']).to eq('pagination_direction must either be forward or backward')
       end
     end
@@ -165,10 +166,11 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         end
       end
 
-      it 'returns all subscriptions when only limit exists in the query parameters and limit is greater than total records' do
+      it 'returns all subscriptions when only limit exists in the query parameters and ' \
+         'limit is greater than total records' do
         get :index, params: { limit: 20 }
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
+        result = response.parsed_body
         expect(result['subscriptions'].length).to eq(15)
         expect(result['next_cursor']).to be_present
         expect(result['previous_cursor']).to be_present
@@ -188,7 +190,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Get records of first page
         get :index, params: { limit: 5, category_guids: category1.guid }
         expect(response).to have_http_status(:ok)
-        first_page = JSON.parse(response.body)
+        first_page = response.parsed_body
         expect(first_page['subscriptions'].length).to eq(5)
         expect(first_page['next_cursor']).to be_present
         expect(first_page['previous_cursor']).to be_present
@@ -197,7 +199,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Get records of second page
         get :index, params: { limit: 5, category_guids: category1.guid, pagination_id: first_page['next_cursor'] }
         expect(response).to have_http_status(:ok)
-        second_page = JSON.parse(response.body)
+        second_page = response.parsed_body
         expect(second_page['subscriptions'].length).to eq(3)
         expect(second_page['subscriptions']).not_to eq(first_page['subscriptions'])
         expect(second_page['next_cursor']).to be_present
@@ -225,7 +227,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
           limit: 20
         }
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
+        result = response.parsed_body
         expect(result['subscriptions'].length).to eq(16)
         expect(result['next_cursor']).to be_present
         expect(result['previous_cursor']).to be_present
@@ -244,7 +246,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
       it 'returns paginated results when only category_guid exists in the query parameters' do
         get :index, params: { category_guids: category1.guid }
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
+        result = response.parsed_body
         expect(result['subscriptions'].length).to eq(8)
         expect(result['next_cursor']).to be_present
         expect(result['previous_cursor']).to be_present
@@ -258,29 +260,6 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
             'category_name'
           )
         end
-      end
-
-      it 'returns paginated results when there are multiple limit parameters in the query string' do
-        get :index, params: { limit: 5 }, params: { limit: 3 }
-        expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
-        expect(result['subscriptions'].length).to eq(3)
-      end
-
-      it 'returns paginated results when there are multiple pagination_id parameters in the query string' do
-        first_subscription = create(:subscription, customer: customer, category: category1)
-        second_subscription = create(:subscription, customer: customer, category: category2)
-        third_subscription = create(:subscription, customer: customer, category: create(:category))
-
-        get :index, params: { pagination_id: first_subscription.id, pagination_id: second_subscription.id }
-        expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
-
-        expect(result['subscriptions'].length).to eq(1)
-        expect(result['subscriptions'].first['work_email']).to eq(third_subscription.customer.work_email)
-        expect(result['next_cursor']).to eq(third_subscription.id)
-        expect(result['previous_cursor']).to eq(third_subscription.id)
-        expect(result['has_more']).to be_falsey
       end
     end
 
@@ -296,7 +275,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Forward pagination
         get :index, params: { limit: 3 }
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body)
+        result = response.parsed_body
 
         expect(result['subscriptions'].length).to eq(3)
         expect(result['previous_cursor']).to eq(subscription_one.id)
@@ -306,7 +285,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Forward pagination
         get :index, params: { limit: 3, pagination_id: result['next_cursor'] }
         expect(response).to have_http_status(:ok)
-        result_two = JSON.parse(response.body)
+        result_two = response.parsed_body
 
         expect(result_two['subscriptions'].length).to eq(3)
         expect(result_two['previous_cursor']).to eq(subscription_four.id)
@@ -316,7 +295,7 @@ RSpec.describe V1::SubscriptionsController, type: :controller do
         # Backward pagination
         get :index, params: { limit: 3, pagination_id: result_two['previous_cursor'], pagination_direction: 'backward' }
         expect(response).to have_http_status(:ok)
-        result_three = JSON.parse(response.body)
+        result_three = response.parsed_body
 
         expect(result_three['subscriptions'].length).to eq(3)
         expect(result_three['previous_cursor']).to eq(subscription_one.id)

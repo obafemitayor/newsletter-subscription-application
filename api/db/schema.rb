@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_03_112848) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_07_135940) do
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "deleted_at"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_112848) do
     t.datetime "updated_at", null: false
     t.string "guid", limit: 36
     t.index ["guid"], name: "index_categories_on_guid", unique: true
+    t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
   create_table "customers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -40,6 +41,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_03_112848) do
     t.datetime "updated_at", null: false
     t.string "guid", limit: 36
     t.index ["category_id"], name: "index_subscriptions_on_category_id"
+    t.index ["customer_id", "category_id"], name: "index_subscriptions_on_customer_and_category", unique: true
     t.index ["customer_id"], name: "index_subscriptions_on_customer_id"
     t.index ["guid"], name: "index_subscriptions_on_guid", unique: true
   end

@@ -12,7 +12,7 @@ RSpec.describe V1::CategoriesController, type: :controller do
       get :index
       expect(response).to have_http_status(:ok)
 
-      result = JSON.parse(response.body)
+      result = response.parsed_body
       expect(result['categories'].length).to eq(3)
       expect(result['categories']).to match_array([
                                                     { 'guid' => category1.guid, 'name' => 'Category A' },

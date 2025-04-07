@@ -6,13 +6,18 @@ class SubscriptionService
       return if category_guids.blank?
 
       ActiveRecord::Base.transaction do
-        customer = Customer.find_or_create_by!(work_email:) do |c|
+        customer = Customer.find_or_create_by!(work_email: work_email) do |c|
           c.first_name = first_name
           c.last_name = last_name
           c.guid = SecureRandom.uuid
         end
         subscriptions = prepare_subscription_data(customer, category_guids)
+
+        # ignoring rubocop warning because I am positive I have
+        # validated the data before insertion so this is safe
+        # rubocop:disable Rails/SkipsModelValidations
         Subscription.insert_all!(subscriptions)
+        # rubocop:enable Rails/SkipsModelValidations
       end
     end
 
@@ -58,30 +63,36 @@ class SubscriptionService
       end
     end
 
-    def fetch_subscriptions_from_db(category_guids: nil, limit:, pagination_id: nil, pagination_direction: 'forward')
+    def fetch_subscriptions_from_db(limit:, category_guids: nil, pagination_id: nil, pagination_direction: 'forward')
       subscriptions = Subscription.active
-      .joins(:customer, :category)
-      .select('subscriptions.id',
-            'customers.work_email',
-            'customers.first_name',
-            'customers.last_name',
-            'categories.name as category_name')
+                                  .joins(:customer, :category)
+                                  .select('subscriptions.id',
+                                          'customers.work_email',
+                                          'customers.first_name',
+                                          'customers.last_name',
+                                          'categories.name as category_name')
 
       subscriptions = subscriptions.where(categories: { guid: category_guids }) if category_guids.present?
-      
-      #using cursor-based pagination because it is more efficient and scales better with large data sets than offset-based pagination
-      subscriptions = subscriptions.where(pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id) if pagination_id.present?
+
+      # using cursor-based pagination because it is more efficient and
+      # scales better with large data sets than offset-based pagination
+      if pagination_id.present?
+        subscriptions = subscriptions.where(
+          pagination_direction == 'forward' ? 'subscriptions.id > ?' : 'subscriptions.id < ?', pagination_id
+        )
+      end
       subscriptions = subscriptions.order(id: pagination_direction == 'forward' ? :asc : :desc).limit(limit)
-      
-      # Reverse the order when pagination direction is backward to ensure the value of previous cursor is correct
+
+      # Reverse the order when pagination direction is backward to ensure
+      # the value of previous cursor is correct
       pagination_direction == 'backward' ? subscriptions.reverse : subscriptions
     end
 
     def build_subscription_list(subscriptions, limit, pagination_direction)
       return subscriptions.take(limit) if pagination_direction == 'forward'
       return subscriptions.drop(1).take(limit) if subscriptions.size > limit
+
       subscriptions.take(limit)
     end
-
   end
 end

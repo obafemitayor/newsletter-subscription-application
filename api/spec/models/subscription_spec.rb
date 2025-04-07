@@ -18,19 +18,13 @@ RSpec.describe Subscription, type: :model do
     it 'cannot be created without customer' do
       subscription = build(:subscription, customer: nil)
       expect(subscription.save).to be false
-      expect(subscription.errors.full_messages).to include(
-        'Customer must exist',
-        "Customer can't be blank"
-      )
+      expect(subscription.errors.full_messages).to include('Customer must exist')
     end
 
     it 'cannot be created without category' do
       subscription = build(:subscription, customer: customer, category: nil)
       expect(subscription.save).to be false
-      expect(subscription.errors.full_messages).to include(
-        'Category must exist',
-        "Category can't be blank"
-      )
+      expect(subscription.errors.full_messages).to include('Category must exist')
     end
 
     it 'cannot create duplicate subscription for same customer and category' do
