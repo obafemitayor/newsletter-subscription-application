@@ -252,29 +252,6 @@ onMounted(async () => {
     }
   }
 
-  .load-more {
-    margin-top: 20px;
-    text-align: center;
-
-    button {
-      padding: 8px 16px;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #357abd;
-      }
-
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-    }
-  }
-
   .pagination-buttons {
     display: flex;
     justify-content: flex-end;
