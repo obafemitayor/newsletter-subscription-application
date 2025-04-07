@@ -5,23 +5,6 @@ const i18n = createI18n({
   locale: 'en',
   messages: {
     en: {
-      subscriptionList: {
-        title: "Subscriptions",
-        filter: {
-          button: "Filter subscriptions"
-        },
-        table: {
-          email: "Work Email",
-          firstName: "First Name",
-          lastName: "Last Name",
-          category: "Category",
-          noData: "No subscriptions found"
-        },
-        pagination: {
-          loadPrevious: "Previous",
-          loadNext: "Next"
-        }
-      },
       subscription: {
         inputs: {
           firstName: 'First name',
@@ -51,12 +34,30 @@ const i18n = createI18n({
         categories: {
           error: 'Failed to fetch categories, please try again'
         },
-        subscriptions: {
+        subscriptionList: {
           error: 'Failed to fetch subscriptions'
         },
         subscription: {
           success: 'Subscription created successfully',
           error: 'Failed to create subscription, please try again'
+        }
+      },
+      subscriptionList: {
+        title: "Subscriptions",
+        filter: {
+          button: "Filter subscriptions",
+          checkbox: "Filter subscriptions by {category}"
+        },
+        table: {
+          email: "Work Email",
+          firstName: "First Name",
+          lastName: "Last Name",
+          category: "Category",
+          noData: "No subscriptions found"
+        },
+        pagination: {
+          loadPrevious: "Previous",
+          loadNext: "Next"
         }
       }
     }

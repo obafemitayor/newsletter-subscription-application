@@ -106,7 +106,7 @@ const setPaginationButtons = () => {
 
 const getCategories = async () => {
   try {
-    return fetchCategories();
+    return await fetchCategories();
   } catch (error) {
     throw new Error(t('alerts.categories.error'));
   }
@@ -114,7 +114,7 @@ const getCategories = async () => {
 
 const getSubscriptionList = async (params: SubscriptionQueryParams) => {
   try {
-    return getSubscriptions(params)
+    return await getSubscriptions(params)
   } catch (error) {
     throw new Error(t('alerts.subscriptionList.error'));
   }

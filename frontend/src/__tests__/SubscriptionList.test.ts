@@ -85,7 +85,7 @@ describe('SubscriptionList Component', () => {
   });
 
   it('should show error when categories fetching fails', async () => {
-    initGetCategoriesMock(500, null, new Error('Failed to fetch categories'));
+    initGetCategoriesMock(500, null, new Error('Failed to fetch'));
     initGetSubscriptionsMock(200, 
       { limit: 10, 
         pagination_direction: 'forward' 
@@ -100,7 +100,7 @@ describe('SubscriptionList Component', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith('Failed to fetch categories');
+      expect(alertMock).toHaveBeenCalledWith('Failed to fetch categories, please try again');
       expect(alertMock).not.toHaveBeenCalledWith('Failed to fetch subscriptions');
       expect(screen.getByText('No subscriptions found')).toBeInTheDocument();
       expect(screen.queryByText('Product updates')).not.toBeInTheDocument();
