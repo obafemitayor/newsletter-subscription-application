@@ -23,11 +23,11 @@ RSpec.describe Customer, type: :model do
     end
 
     it 'cannot be created with duplicate email' do
-      existing_customer = create(:customer, work_email: 'test@example.com')
+      create(:customer, work_email: 'test@example.com')
       new_customer = build(:customer, work_email: 'test@example.com')
       expect(new_customer.save).to be false
       expect(new_customer.errors.full_messages).to include(
-        "Work email has already been taken"
+        'Work email has already been taken'
       )
     end
 

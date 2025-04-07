@@ -1,7 +1,7 @@
 class Subscription < ApplicationRecord
   # Soft delete
   scope :active, -> { where(deleted_at: nil) }
-  
+
   # Relationships
   belongs_to :customer
   belongs_to :category
@@ -9,7 +9,7 @@ class Subscription < ApplicationRecord
   # Validations
   validates :customer_id, presence: true
   validates :category_id, presence: true
-  validates :customer_id, uniqueness: { scope: :category_id, message: "already subscribed to this category" }
+  validates :customer_id, uniqueness: { scope: :category_id, message: 'already subscribed to this category' }
 
   # Instance methods
   def soft_delete

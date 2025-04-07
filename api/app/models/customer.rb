@@ -1,7 +1,7 @@
 class Customer < ApplicationRecord
   # Soft delete
   scope :active, -> { where(deleted_at: nil) }
-  
+
   # Relationships
   has_many :subscriptions, dependent: :destroy
   has_many :categories, through: :subscriptions

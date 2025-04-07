@@ -39,14 +39,14 @@ module V1
       params.require(:last_name)
       params.require(:work_email)
       params.require(:category_guids)
-      
+
       unless params[:work_email].match?(URI::MailTo::EMAIL_REGEXP)
         raise ArgumentError, 'work_email must be a valid email address'
       end
 
-      if params[:category_guids].empty?
-        raise ActionController::ParameterMissing.new('category_guids cannot be empty')
-      end
+      return unless params[:category_guids].empty?
+
+      raise ActionController::ParameterMissing.new('category_guids cannot be empty')
     end
 
     def validate_query_string_parameters
@@ -54,9 +54,7 @@ module V1
         raise ArgumentError, 'pagination_id must be numeric'
       end
 
-      if params[:limit].present? && params[:limit].to_i.zero?
-        raise ArgumentError, 'limit must be numeric'
-      end
+      raise ArgumentError, 'limit must be numeric' if params[:limit].present? && params[:limit].to_i.zero?
 
       if params[:category_guids] && ![*params[:category_guids]].all?(&:present?)
         raise ArgumentError, 'category_guids must be a list of non-empty strings'

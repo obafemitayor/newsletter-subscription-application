@@ -21,11 +21,11 @@ RSpec.describe Category, type: :model do
     end
 
     it 'cannot be created with duplicate name' do
-      existing_category = create(:category, name: 'Technology')
+      create(:category, name: 'Technology')
       new_category = build(:category, name: 'Technology')
       expect(new_category.save).to be false
       expect(new_category.errors.full_messages).to include(
-        "Name has already been taken"
+        'Name has already been taken'
       )
     end
 

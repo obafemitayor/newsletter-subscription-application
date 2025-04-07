@@ -19,7 +19,7 @@ RSpec.describe Subscription, type: :model do
       subscription = build(:subscription, customer: nil)
       expect(subscription.save).to be false
       expect(subscription.errors.full_messages).to include(
-        "Customer must exist",
+        'Customer must exist',
         "Customer can't be blank"
       )
     end
@@ -28,7 +28,7 @@ RSpec.describe Subscription, type: :model do
       subscription = build(:subscription, customer: customer, category: nil)
       expect(subscription.save).to be false
       expect(subscription.errors.full_messages).to include(
-        "Category must exist",
+        'Category must exist',
         "Category can't be blank"
       )
     end
@@ -38,7 +38,7 @@ RSpec.describe Subscription, type: :model do
       duplicate = build(:subscription, customer: customer, category: category)
       expect(duplicate.save).to be false
       expect(duplicate.errors.full_messages).to include(
-        "Customer already subscribed to this category"
+        'Customer already subscribed to this category'
       )
     end
 
@@ -66,7 +66,7 @@ RSpec.describe Subscription, type: :model do
     it 'returns all customers subscribed to a category' do
       another_customer = create(:customer)
       create(:subscription, customer: another_customer, category: category1)
-      
+
       expect(category1.customers).to match_array([customer, another_customer])
     end
   end
