@@ -8,7 +8,7 @@ This is a web application that allows users to subscribe to newsletters that are
 ## 🗂️ Basic Repository Folder Structure
 
 ```bash
-story-blok-newsletter-subscription-application/
+newsletter-subscription-application/
 ├── api/
 │   ├── app/
 │   │   ├── controllers/
